@@ -37,9 +37,8 @@ scrape rankings to see where you stand on croosade maplestory private server in 
     29: name=Sneze,level=123
     30: name=squat,level=122
     31: name=Dragonfruit,level=122
-
-  
 ```
 
 # Notes
-The script might take some time to run if your not on the higher end of the rankings.
+ - The script might take some time to run if your not on the higher end of the rankings.
+ - If other players of your job are found on the same ranking page, they will be appropriately displayed below you.
