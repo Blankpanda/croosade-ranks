@@ -3,13 +3,12 @@ import sys
 import time
 import urllib.request
 
-
-
-
 from bs4 import BeautifulSoup
+from datetime import datetime
 #ranking-scrape.py <name>
 temp_files = []
 def main():
+    start_time = time.time()
     args = sys.argv
 
     if len(args) != 2:
@@ -48,9 +47,20 @@ def main():
                         ranking_data.insert(0,{"name":val_list[i][0].text,"job":val_list[i][1].text,"level":val_list[i][2].text.split(" ")[0]})
 
         start_rank -= 5
-    display_ranks(ranking_data)
+
+    end_time = time.time()
+    time_spent = end_time - start_time
+    time_str = str()
+
+    if((time_spent/60.0) >= 1.0):
+        time_str = "Time in minutes: " + str(time_spent / 60.0)
+    else:
+        time_str = "Time in seconds: " + str(time_spent)
+    
+    display_ranks(ranking_data,time_str)
     delete_temp_files()
 
+    # find the name of the character by searching the rankings and return their rank
 def get_character_stats(url_stub, character_name):    
     raw_html = read_tmp_file(get_page_html(url_stub,character_name))
     if "No character found." in raw_html:
@@ -60,8 +70,8 @@ def get_character_stats(url_stub, character_name):
     table = get_table(raw_html)
     rows = get_rows(table)
     
-    val_list = [(row.find_all("td")) for row in rows] # two lists are parallel
-   
+    val_list = [(row.find_all("td")) for row in rows]   
+
     for i in reversed(range(0,len(val_list))):
         if (val_list[i] != []): # prevent exception if empty, not chaining if's
             for e in val_list[i][0].findAll('b'): e.extract() # remove guild
@@ -69,10 +79,12 @@ def get_character_stats(url_stub, character_name):
             if(val_list[i][0].text == character_name):
                 return val_list[i][1].text,[row.find_all("th") for row in rows][i][0]
 
-    return None, None
+    return None, None # P = NP if this happens
 
-def display_ranks(ranks):
-    print("for job:" + ranks[0]["job"])
+def display_ranks(ranks,time_str):
+    print("todays date: " + str(datetime.now))
+    print("total execution time: " + time_str)
+    print("for job: " + ranks[0]["job"])
     for rank in ranks:
         print(str(ranks.index(rank)+1)+ ": name=" + str(rank["name"]) + ",level=" + str(rank["level"]))
     
