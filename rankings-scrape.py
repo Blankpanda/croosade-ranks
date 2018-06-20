@@ -30,11 +30,11 @@ def main():
 
     ranking_data = []
     iteration_count = get_iter_estimate(start_rank)
-    
-    while start_rank >= 1:
+    rank_iter = start_rank
+    while rank_iter  >= 1:
         iter_start_time = time.time()
         rank_count = 0
-        raw_html = read_tmp_file(get_page_html(url_stub_rank,start_rank))
+        raw_html = read_tmp_file(get_page_html(url_stub_rank,rank_iter))
         if(raw_html != ""):
             table = get_table(raw_html)
             rows = get_rows(table)
@@ -47,19 +47,30 @@ def main():
                         for e in val_list[i][2].findAll('small'): e.extract() # remove exp
                         for e in val_list[i][2].findAll('i'): e.extract() # remove ranking change
                         # stack push
-                        ranking_data.insert(0,{"name":val_list[i][0].text,"job":val_list[i][1].text,"level":val_list[i][2].text.split(" ")[0],"ranking":[row.find_all("th") for row in rows][i][0].text})
+                        ranking_data.insert(0,{"name":val_list[i][0].text,\
+                                               "job":val_list[i][1].text,
+                                               "level":val_list[i][2].text.split(" ")[0],
+                                               "ranking":[row.find_all("th") for row in rows][i][0].text
+                                           })
+
         iter_end_time = time.time()
-        print("Estimated completion time: " + str((iter_end_time-iter_start_time)*get_iter_estimate(start_rank)) )
-        start_rank -= 5
+        iter_estimate_seconds = (iter_end_time-iter_start_time)*get_iter_estimate(start_rank)
+        
+        if(iter_estimate_seconds/60.0 >= 1.0) and (rank_iter == start_rank): # do it once
+            print("Estimated completion time in minutes: " + str((iter_estimate_seconds / 60) - ((iter_estimate_seconds / 60) % -1)))
+        elif (rank_iter == start_rank):
+            print("Estimated completion time in seconds:" + str(iter_estimate_seconds - (iter_estimate_seconds % -1)))
+             
+        rank_iter -= 5
 
     end_time = time.time()
     time_spent = end_time - start_time
     time_str = str()
 
     if((time_spent/60.0) >= 1.0):
-        time_str = "estimated time in minutes: " + str(time_spent / 60.0)
+        time_str = "time taken in minutes: " + str(time_spent / 60.0)
     else:
-        time_str = "estimated time in seconds: " + str(time_spent)
+        time_str = "time taken in seconds: " + str(time_spent)
     
     display_ranks(ranking_data,time_str)
     delete_temp_files()
@@ -91,7 +102,7 @@ def get_character_stats(url_stub, character_name):
     return None, None # P = NP if this happens
 
 def display_ranks(ranks,time_str):
-    print("todays date: " + str(datetime.now))
+    print("todays date: " + str(datetime.now()))
     print("total execution time: " + time_str)
     print("for job: " + ranks[0]["job"])
 
