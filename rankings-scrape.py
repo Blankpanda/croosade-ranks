@@ -2,6 +2,7 @@ import os
 import sys
 import time
 import urllib.request
+import math
 
 from bs4 import BeautifulSoup
 from datetime import datetime
@@ -28,8 +29,10 @@ def main():
         sys.exit(0)
 
     ranking_data = []
-
+    iteration_count = get_iter_estimate(start_rank)
+    
     while start_rank >= 1:
+        iter_start_time = time.time()
         rank_count = 0
         raw_html = read_tmp_file(get_page_html(url_stub_rank,start_rank))
         if(raw_html != ""):
@@ -44,8 +47,9 @@ def main():
                         for e in val_list[i][2].findAll('small'): e.extract() # remove exp
                         for e in val_list[i][2].findAll('i'): e.extract() # remove ranking change
                         # stack push
-                        ranking_data.insert(0,{"name":val_list[i][0].text,"job":val_list[i][1].text,"level":val_list[i][2].text.split(" ")[0]})
-
+                        ranking_data.insert(0,{"name":val_list[i][0].text,"job":val_list[i][1].text,"level":val_list[i][2].text.split(" ")[0],"ranking":[row.find_all("th") for row in rows][i][0].text})
+        iter_end_time = time.time()
+        print("Estimated completion time: " + str((iter_end_time-iter_start_time)*get_iter_estimate(start_rank)) )
         start_rank -= 5
 
     end_time = time.time()
@@ -53,14 +57,19 @@ def main():
     time_str = str()
 
     if((time_spent/60.0) >= 1.0):
-        time_str = "Time in minutes: " + str(time_spent / 60.0)
+        time_str = "estimated time in minutes: " + str(time_spent / 60.0)
     else:
-        time_str = "Time in seconds: " + str(time_spent)
+        time_str = "estimated time in seconds: " + str(time_spent)
     
     display_ranks(ranking_data,time_str)
     delete_temp_files()
 
     # find the name of the character by searching the rankings and return their rank
+def get_iter_estimate(rank):
+    estim_iters = rank / 5 # 5 = the number of rankings displayed per pge
+    return (estim_iters - (estim_iters % -1))
+    
+    
 def get_character_stats(url_stub, character_name):    
     raw_html = read_tmp_file(get_page_html(url_stub,character_name))
     if "No character found." in raw_html:
@@ -88,7 +97,7 @@ def display_ranks(ranks,time_str):
 
     for rank in ranks:
         rank['level'] = rank["level"].replace('-','')
-        print(str(ranks.index(rank)+1)+ ": name=" + str(rank["name"]) + ",level=" + str(rank["level"]))
+        print("class rank=" + str(ranks.index(rank)+1)+ ":" +"\ttotal rank=" + str(rank["ranking"]) +"\tname=" + str(rank["name"]) + "\tlevel=" + str(rank["level"]))
     
 def get_table(html):
     bs4 = BeautifulSoup(html,'html.parser')
