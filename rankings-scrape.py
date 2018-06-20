@@ -85,7 +85,9 @@ def display_ranks(ranks,time_str):
     print("todays date: " + str(datetime.now))
     print("total execution time: " + time_str)
     print("for job: " + ranks[0]["job"])
+
     for rank in ranks:
+        rank['level'] = rank["level"].replace('-','')
         print(str(ranks.index(rank)+1)+ ": name=" + str(rank["name"]) + ",level=" + str(rank["level"]))
     
 def get_table(html):
