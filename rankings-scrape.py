@@ -21,12 +21,12 @@ def main():
 
     search_class, start_rank = get_character_stats(url_stub_name_search,str(args[1]))
 
+    if(search_class == None or start_rank == None):
+        print("failed to grab character!")
+        sys.exit(0)
+
     start_rank = int(start_rank.text)
     seach_class = str(search_class)
-
-    if start_rank == None or search_class == None:
-        print("failed to grab chracater")
-        sys.exit(0)
 
     ranking_data = []
     iteration_count = get_iter_estimate(start_rank)
@@ -60,7 +60,7 @@ def main():
             print("Estimated completion time in minutes: " + str((iter_estimate_seconds / 60) - ((iter_estimate_seconds / 60) % -1)))
         elif (rank_iter == start_rank):
             print("Estimated completion time in seconds:" + str(iter_estimate_seconds - (iter_estimate_seconds % -1)))
-             
+        print("current iter:" + str(rank_iter))
         rank_iter -= 5
 
     end_time = time.time()
