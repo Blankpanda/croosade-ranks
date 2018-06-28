@@ -50,7 +50,7 @@ class rank=37:  total rank=1280 name=squat      level=124
 # Notes
  - The script might take some time to run if your not on the higher end of the rankings.
  - If other players of your job are found on the same ranking page, they will be appropriately displayed below you.
- - If your character is below 4th job, lets say, a priest, then the application will pull anyone still listed as a priest above your characer. Turns out there are some players in 15x that are listed as priests. Pulling up my priest I noticed:
+ - If your character is below 4th job, lets say, a priest, then the application will pull anyone still listed as a priest above your characer. Turns out there are some players in 13x that are listed as priests. Pulling up my priest I noticed:
  ```
  for job: Priest
   class rank=1:   total rank=843  name=Shrek      level=135
