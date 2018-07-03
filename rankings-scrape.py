@@ -60,7 +60,6 @@ def main():
             print("Estimated completion time in minutes: " + str((iter_estimate_seconds / 60) - ((iter_estimate_seconds / 60) % -1)))
         elif (rank_iter == start_rank):
             print("Estimated completion time in seconds:" + str(iter_estimate_seconds - (iter_estimate_seconds % -1)))
-        print("current iter:" + str(rank_iter))
         rank_iter -= 5
 
     end_time = time.time()
