@@ -80,8 +80,9 @@ def get_iter_estimate(rank):
     return (estim_iters - (estim_iters % -1))
     
     
-def get_character_stats(url_stub, character_name):    
+def get_character_stats(url_stub, character_name):   
     raw_html = read_tmp_file(get_page_html(url_stub,character_name))
+
     if "No character found." in raw_html:
         print("Character not found. exiting.")
         sys.exit(0)
@@ -111,7 +112,7 @@ def display_ranks(ranks,time_str):
     
 def get_table(html):
     bs4 = BeautifulSoup(html,'html.parser')
-    table = bs4.find(lambda tag: tag.name == 'table' and tag.has_attr('class') and "rankings" in tag["class"])
+    table = bs4.find(lambda tag: tag.name == 'table' and tag.has_attr('class'))
     return table
 
 def get_rows(table):
